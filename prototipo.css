@@ -1,0 +1,203 @@
+body { font-family: 'Segoe UI', Arial, sans-serif; margin: 20px; color: #333; background-color: #f4f6f9; }
+
+/* Navegação por Abas */
+.abas-navegacao { max-width: 950px; margin: 0 auto 15px auto; display: flex; gap: 10px; }
+.aba-btn { padding: 12px 20px; border: none; background: #ddd; cursor: pointer; font-weight: bold; border-radius: 5px 5px 0 0; font-size: 14px; }
+.aba-btn.ativa { background: #0056b3; color: white; }
+
+/* Painel de Controle de Telas */
+.tela { display: none; max-width: 950px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #e0e0e0; box-sizing: border-box; }
+.tela.ativa { display: block; }
+
+/* Área de Filtros e Busca */
+.barra-filtros { background: #f8f9fa; padding: 15px; border-radius: 6px; border: 1px solid #e0e0e0; margin-bottom: 20px; }
+.campo-busca { width: 100%; padding: 10px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; margin-bottom: 10px; }
+.grupo-filtros { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.filtro-btn { padding: 6px 12px; font-size: 12px; border: 1px solid #ccc; background: #fff; border-radius: 4px; cursor: pointer; font-weight: bold; }
+.filtro-btn.ativo { background: #0056b3; color: white; border-color: #0056b3; }
+
+/* Estilos do Painel/Dashboard */
+.tabela-painel { width: 100%; border-collapse: collapse; margin-top: 15px; }
+.tabela-painel th, .tabela-painel td { padding: 12px; border: 1px solid #e0e0e0; text-align: left; font-size: 14px; }
+.tabela-painel th { background: #f8f9fa; }
+.status-badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+.status-aberta { background: #fff3cd; color: #856404; }
+.status-concluida { background: #d4edda; color: #155724; }
+.status-cancelada { background: #f8d7da; color: #721c24; }
+.status-orcamento { background: #e7d4f5; color: #5a3d7a; }
+
+.financeiro-badge { padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-top: 4px; display: inline-block; }
+.fin-pago { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+.fin-pendente { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+.cat-badge { padding: 3px 6px; border-radius: 3px; font-size: 11px; font-weight: bold; background: #e2e3e5; color: #383d41; }
+
+/* NOVO DESIGN DO CABEÇALHO DA O.S. (MAIS APRESENTÁVEL) */
+.header-os { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    border-bottom: 2px solid #0056b3; 
+    padding-bottom: 20px; 
+    margin-bottom: 25px; 
+    gap: 20px;
+}
+.header-logo-area {
+    flex: 1;
+}
+.header-logo-area h2 {
+    margin: 0 0 6px 0;
+}
+.empresa-titulo-input {
+    font-size: 20px !important;
+    font-weight: 800 !important;
+    color: #111;
+    letter-spacing: -0.5px;
+    text-transform: uppercase;
+}
+.empresa-subtitulo-input {
+    font-size: 13px !important; 
+    color: #555 !important;
+    font-weight: 500;
+}
+.header-info-area {
+    text-align: right;
+    min-width: 240px;
+}
+.header-info-area h3 {
+    margin: 0 0 8px 0;
+    font-size: 13px;
+    letter-spacing: 1px;
+    color: #666;
+    font-weight: 700;
+}
+.box-numero-os {
+    background-color: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    padding: 8px 16px;
+    border-radius: 6px;
+    display: inline-block;
+}
+.box-numero-os h2 {
+    margin: 0;
+    font-size: 22px;
+    color: #0056b3;
+    font-weight: 700;
+}
+
+/* Estilos dos Inputs Editáveis */
+.editable { border: 1px dashed #bbb; padding: 6px; font-family: inherit; font-size: inherit; width: 95%; box-sizing: border-box; border-radius: 4px; background: transparent; }
+.editable:focus { border: 1px solid #0056b3; outline: none; background: #fff; }
+.editable:disabled { border: none; background: transparent; color: #333; cursor: default; opacity: 1; }
+
+.titulo-secao { background: #eef2f7; padding: 6px 12px; font-size: 13px; font-weight: bold; text-transform: uppercase; margin-top: 20px; margin-bottom: 12px; border-left: 5px solid #0056b3; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.grid-custom-cliente { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 15px; }
+
+.tabela-itens { width: 100%; border-collapse: collapse; margin-top: 10px; }
+.tabela-itens th, .tabela-itens td { border: 1px solid #dee2e6; padding: 10px; text-align: left; }
+.tabela-itens th { background: #f8f9fa; font-size: 13px; }
+.text-right { text-align: right; }
+.linha-total { font-size: 16px; font-weight: bold; background-color: #f8f9fa; }
+
+/* Cabeçalhos controlados para Impressão */
+.paginacao-topo-f1 { font-size: 11px; color: #888; font-weight: bold; margin-top: 4px; text-transform: uppercase; }
+
+/* CABEÇALHO DA PÁGINA 2 */
+.cabecalho-segunda-via { display: none; border-bottom: 1px solid #bbb; padding-bottom: 10px; margin-bottom: 25px; font-size: 12px; color: #333; }
+.tabela-infos-f2 { width: 100%; border-collapse: collapse; }
+.tabela-infos-f2 td { border: none !important; padding: 3px 0 !important; font-size: 12px !important; }
+
+/* Elementos Ocultados por Padrão na Tela */
+.rodape-impressao-f1, .rodape-impressao-f2 { display: none; }
+
+.bloco-fechamento-os { margin-top: 20px; }
+.termo-garantia-texto { font-size: 12.5px; color: #333; line-height: 1.6; text-align: justify; margin-top: 8px; background: #fdfdfd; }
+.assinaturas { display: flex; justify-content: space-between; margin-top: 60px; margin-bottom: 20px; }
+.bloco-assinatura { width: 45%; text-align: center; border-top: 1px solid #333; padding-top: 8px; font-size: 12px; font-weight: bold; }
+
+/* Bloco do Canhoto Avulso */
+#container-canhoto-avulso { display: none; margin-top: 25px; }
+.linha-serrilhada { border-top: 2px dashed #999; margin: 15px 0; text-align: center; position: relative; }
+.linha-serrilhada span { position: absolute; top: -10px; background: #fff; padding: 0 10px; font-size: 11px; color: #666; font-weight: bold; text-transform: uppercase; left: 50%; transform: translateX(-50%); }
+.canhoto-recortavel { border: 2px dashed #333; padding: 20px; background: #fafafa; border-radius: 4px; }
+
+/* Botões */
+.btn { padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 13px; }
+.btn-primary { background: #0056b3; color: white; }
+.btn-success { background: #28a745; color: white; }
+.btn-danger { background: #dc3545; color: white; }
+.btn-warning { background: #ffc107; color: #212529; }
+.btn-whatsapp { background: #25D366; color: white; }
+.btn-sm { padding: 5px 8px; font-size: 11px; margin-right: 4px; }
+
+.box-status-os { background: #fff3cd; padding: 15px; border-radius: 6px; border: 1px solid #ffeeba; margin-bottom: 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 15px; }
+
+/* Estilos para Comprovante de Pagamento */
+.bloco-comprovante-pagamento { background: #f0f7ff; padding: 20px; border-radius: 8px; border: 2px solid #0056b3; margin-top: 20px; margin-bottom: 20px; }
+.bloco-comprovante-pagamento h3 { margin-top: 0; color: #0056b3; font-size: 16px; }
+.area-upload-comprovante { border: 2px dashed #0056b3; border-radius: 6px; padding: 20px; text-align: center; background: #fff; margin-bottom: 15px; cursor: pointer; transition: all 0.3s ease; }
+.area-upload-comprovante:hover { background: #f8f9fa; border-color: #003d82; }
+.area-upload-comprovante.pronto { border-color: #28a745; background: #f0fff4; }
+.area-upload-comprovante input[type="file"] { display: none; }
+.upload-info { color: #666; font-size: 14px; line-height: 1.6; }
+.upload-info strong { display: block; color: #0056b3; margin-bottom: 8px; }
+.comprovante-anexado { background: #d4edda; border: 1px solid #c3e6cb; padding: 15px; border-radius: 6px; display: none; }
+.comprovante-anexado.ativo { display: block; }
+.comprovante-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.comprovante-nome { font-weight: bold; color: #155724; }
+.comprovante-tamanho { font-size: 12px; color: #666; }
+.btn-comprovante { padding: 8px 12px; margin: 2px; font-size: 12px; }
+.info-bloqueio { background: #fff3cd; border: 1px solid #ffeeba; padding: 12px; border-radius: 4px; margin-bottom: 15px; font-size: 13px; color: #856404; display: none; }
+.info-bloqueio.ativo { display: block; }
+
+/* REGRAS CRUCIAIS PARA IMPRESSÃO */
+@media print {
+    @page { margin: 1.2cm 1.2cm 1.2cm 1.2cm; }
+    body { margin: 0; background: white; color: #000; }
+    .abas-navegacao, .botoes-formulario, .col-acao, .btn-sm, .btn-acao-tabela, .box-status-os, .barra-filtros, .bloco-comprovante-pagamento { display: none !important; }
+    
+    .header-os { border-bottom: 2px solid #000 !important; }
+    .box-numero-os { border: 1px solid #000 !important; background-color: #fff !important; }
+    .box-numero-os h2 { color: #000 !important; }
+
+    body:not(.modo-impressao-canhoto) .rodape-impressao-f1,
+    body:not(.modo-impressao-canhoto) .rodape-impressao-f2 {
+        display: none !important;
+    }
+
+    /* FORÇA OS TERMOS E ASSINATURAS PARA A FOLHA 2 */
+    body:not(.modo-impressao-canhoto) .bloco-fechamento-os { 
+        page-break-before: always; 
+        break-before: page; 
+        margin-top: 0;
+    }
+
+    /* ATIVA O NOVO CABEÇALHO LIMPO NA FOLHA 2 */
+    body:not(.modo-impressao-canhoto) .cabecalho-segunda-via {
+        display: block !important;
+    }
+
+    /* Se estiver imprimindo APENAS o canhoto */
+    body.modo-impressao-canhoto .header-os,
+    body.modo-impressao-canhoto .titulo-secao,
+    body.modo-impressao-canhoto .grid-2,
+    body.modo-impressao-canhoto .grid-custom-cliente,
+    body.modo-impressao-canhoto #bloco-endereco-original,
+    body.modo-impressao-canhoto #form-escopo,
+    body.modo-impressao-canhoto #tabela-financeira,
+    body.modo-impressao-canhoto .bloco-fechamento-os,
+    body.modo-impressao-canhoto .rodape-impressao-f1,
+    body.modo-impressao-canhoto .rodape-impressao-f2,
+    body.modo-impressao-canhoto .paginacao-topo-f1 { display: none !important; }
+
+    body.modo-impressao-canhoto #container-canhoto-avulso { display: block !important; margin-top: 0 !important; }
+    body:not(.modo-impressao-canhoto) #container-canhoto-avulso { display: none !important; }
+
+    .tela { border: none; max-width: 100%; padding: 0; box-shadow: none; display: none; }
+    #tela-nova-os { display: block !important; }
+    
+    .editable { border: none !important; padding: 0 !important; width: 100%; resize: none; color: #000 !important; opacity: 1 !important; }
+    select.editable { appearance: none; -webkit-appearance: none; -moz-appearance: none; background: transparent; color: #000 !important; }
+    .titulo-secao { background: #f0f0f0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema Multi-Serviços Comercial: Gestão de O.S.</title>
+    <link rel="stylesheet" href="prototipo.css">
+    <link rel="stylesheet" href="prototipo.auth.css">
+    <link rel="stylesheet" href="prototipo.theme.css">
+
+</head>
+<body>
+    <!-- Profile area and Login modal -->
+    <div id="profile-area" style="position:fixed; right:20px; top:12px; z-index:1000;">
+        <button id="profile-btn" class="btn btn-primary" style="display:none">Perfil</button>
+        <div id="profile-menu" class="profile-menu" style="display:none"></div>
+    </div>
+    <input id="profile-photo-input" type="file" accept="image/*" style="display:none">
+
+    <div id="login-modal" class="login-modal" style="display:none">
+        <div class="login-box">
+            <h3>Login</h3>
+            <div id="login-error" style="color:#c00; display:none"></div>
+            <input id="login-email" type="email" placeholder="Email" class="editable"><br>
+            <input id="login-password" type="password" placeholder="Senha" class="editable"><br>
+            <button id="login-btn" class="btn btn-success">Entrar</button>
+            <button id="show-register" class="btn btn-warning">Cadastrar</button>
+            <hr>
+            <div id="register-form" style="display:none">
+                <h4>Cadastro</h4>
+                <input id="reg-name" type="text" placeholder="Nome" class="editable"><br>
+                <input id="reg-email" type="email" placeholder="Email" class="editable"><br>
+                <input id="reg-password" type="password" placeholder="Senha" class="editable"><br>
+                    <label for="reg-photo" style="font-size:13px; color:#555; display:block; margin:8px 0 4px;">Foto de perfil (opcional):</label>
+                    <input id="reg-photo" type="file" accept="image/*" class="editable" style="padding:10px;">
+                    <button id="register-btn" class="btn btn-primary">Criar Conta</button>
+                    <button id="cancel-register" class="btn btn-danger">Cancelar</button>
+                </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel (visible to admin users) -->
+    <div id="admin-panel" style="display:none; position:fixed; inset:0; align-items:center; justify-content:center; z-index:2200; background: rgba(0,0,0,0.5);">
+        <div style="background:#fff; padding:20px; border-radius:8px; width:720px; max-height:80vh; overflow:auto;">
+            <h3>Admin Panel</h3>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <label style="font-weight:bold">Resetar próximo número de O.S. para:</label>
+                <input id="admin-reset-input" type="number" min="1" value="1" class="editable" style="width:120px; display:inline-block;">
+                <button id="admin-reset-btn" class="btn btn-danger" onclick="adminResetCounter()">Resetar</button>
+            </div>
+            <hr>
+            <h4>Usuários</h4>
+            <div id="admin-users-list"></div>
+            <hr>
+            <h4>Ordens de Serviço</h4>
+            <div id="admin-os-list"></div>
+            <div style="text-align:right; margin-top:12px;">
+                <button id="admin-close-btn" class="btn btn-primary" onclick="closeAdminPanel()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="app-root">
+    <div class="abas-navegacao">
+        <button class="aba-btn ativa" id="btn-aba-painel" onclick="alternarAba('painel')">📋 Painel de Histórico</button>
+        <button class="aba-btn" id="btn-aba-nova" onclick="alternarAba('nova')">➕ Criar Nova O.S. (<span id="proximo-numero-aba">1</span>)</button>
+    </div>
+
+    <div id="tela-painel" class="tela ativa">
+        <h2>Histórico de Ordens de Serviço</h2>
+        
+        <div class="barra-filtros">
+            <input type="text" id="filtro-busca-texto" class="campo-busca" placeholder="🔍 Digite o nome do cliente, CPF/CNPJ ou o número da O.S. para filtrar na hora..." oninput="filtrarTabelaPainel()">
+            
+            <div class="grupo-filtros">
+                <span style="font-size:13px; font-weight:bold; color:#555;">Status:</span>
+                <button class="filtro-btn ativo" data-tipo="status" data-valor="Todos" onclick="definirFiltro(this)">Todos</button>
+                <button class="filtro-btn" data-tipo="status" data-valor="Orçamento" onclick="definirFiltro(this)">📝 Orçamentos</button>
+                <button class="filtro-btn" data-tipo="status" data-valor="Aberta" onclick="definirFiltro(this)">⚠️ Abertas</button>
+                <button class="filtro-btn" data-tipo="status" data-valor="Concluída" onclick="definirFiltro(this)">✅ Concluídas</button>
+                <button class="filtro-btn" data-tipo="status" data-valor="Cancelada" onclick="definirFiltro(this)">🚫 Canceladas</button>
+                
+                <span style="font-size:13px; font-weight:bold; color:#555; margin-left:15px;">Categoria:</span>
+                <button class="filtro-btn ativo" data-tipo="categoria" data-valor="Todas" onclick="definirFiltro(this)">Todas</button>
+                <button class="filtro-btn" data-tipo="categoria" data-valor="Instalação" onclick="definirFiltro(this)">🛠️ Instalação</button>
+                <button class="filtro-btn" data-tipo="categoria" data-valor="Montagem" onclick="definirFiltro(this)">📦 Montagem</button>
+                <button class="filtro-btn" data-tipo="categoria" data-valor="Manutenção" onclick="definirFiltro(this)">🔄 Manutenção</button>
+                <button class="filtro-btn" data-tipo="categoria" data-valor="Reparo" onclick="definirFiltro(this)">🩹 Reparo</button>
+            </div>
+        </div>
+
+        <table class="tabela-painel">
+            <thead>
+                <tr>
+                    <th style="width: 70px;">Nº O.S.</th>
+                    <th style="width: 110px;">Categoria</th>
+                    <th>Cliente / Documento</th>
+                    <th>Descrição / Equipamento</th>
+                    <th style="width: 130px;">Financeiro</th>
+                    <th style="width: 90px;">Status</th>
+                    <th style="width: 180px;" class="col-acao">Ações</th>
+                </tr>
+            </thead>
+            <tbody id="corpo-tabela-painel"></tbody>
+        </table>
+    </div>
+
+    <div id="tela-nova-os" class="tela">
+        
+        <div class="box-status-os" id="bloco-status-gerenciamento" style="display: none;">
+            <div>
+                <strong>Status Geral:</strong>
+                <select id="form-status-atualizador" style="padding: 6px; font-weight: bold; border-radius: 4px;">
+                    <option value="Orçamento">📝 Orçamento / Proposta</option>
+                    <option value="Aberta">⚠️ Aberta / Em Andamento</option>
+                    <option value="Concluída">✅ Concluída / Entregue</option>
+                    <option value="Cancelada">🚫 Cancelada</option>
+                </select>
+            </div>
+            <div>
+                <strong>Cobrança:</strong>
+                <select id="form-cobranca-atualizador" style="padding: 6px; font-weight: bold; border-radius: 4px;">
+                    <option value="Aguardando Pagamento">❌ Aguardando Pagamento</option>
+                    <option value="Pago">💰 Pago / Liquidado</option>
+                </select>
+            </div>
+            <button class="btn btn-success" style="padding: 6px 12px;" onclick="salvarStatusAtualizado()">🔄 Atualizar O.S.</button>
+            <button class="btn btn-primary" style="padding: 6px 12px; display:none;" id="btn-converter-orcamento" onclick="converterOrcamentoEmOS()">✅ Converter em O.S.</button>
+            <button class="btn btn-whatsapp" style="padding: 6px 12px; margin-left: auto;" onclick="enviarWhatsAppOS()">💬 Enviar por WhatsApp</button>
+        </div>
+
+        <div class="rodape-impressao-f1">
+            Ordem de Serviço Nº <span class="espelho-os-num">1</span> | Página 1 de 2
+        </div>
+
+        <div class="header-os">
+            <div class="header-logo-area">
+                <h2><input type="text" id="cfg-nome-empresa" class="editable empresa-titulo-input" value="EMPRESA DE PRESTAÇÃO DE SERVIÇOS E MANUTENÇÃO"></h2>
+                <p style="margin: 0;"><input type="text" id="cfg-infos-empresa" class="editable empresa-subtitulo-input" value="Reparos, Montagens e Instalações Gerais | Contato: (00) 00000-0000"></p>
+            </div>
+            <div class="header-info-area">
+                <h3>ORDEM DE SERVIÇO</h3>
+                <div class="box-numero-os">
+                    <h2>Nº <span id="os-numero-atual">1</span></h2>
+                </div>
+                <div class="paginacao-topo-f1">Documento Técnico</div>
+            </div>
+        </div>
+
+        <div class="titulo-secao">1. Classificação e Prazo</div>
+        <div class="grid-2">
+            <div>
+                <strong>Tipo de Serviço Principal:</strong><br>
+                <select id="form-tipo-servico" class="editable" style="width: 100%; margin-top: 5px;" onchange="atualizarTermoGarantiaDinamico()">
+                    <option value="Instalação">🛠️ Instalação (Primeiro funcionamento)</option>
+                    <option value="Montagem">📦 Montagem (Agrupamento de peças)</option>
+                    <option value="Manutenção">🔄 Manutenção (Preventiva / Inspeção)</option>
+                    <option value="Reparo">🩹 Reparo (Correção de defeito / Conserto)</option>
+                </select>
+            </div>
+            <div>
+                <strong>Prazo de Entrega / Execução:</strong><br>
+                <input type="text" id="form-prazo" class="editable" value="A combinar" style="margin-top: 5px;">
+            </div>
+        </div>
+
+        <div class="titulo-secao">2. Dados do Cliente e Contato</div>
+        <div class="grid-custom-cliente">
+            <div><strong>Cliente / Empresa Solicitante:</strong><br><input type="text" id="form-cliente" class="editable" placeholder="Nome completo / Razão Social" oninput="espelharDadosSegundaFolha()"></div>
+            <div><strong>CPF / CNPJ:</strong><br><input type="text" id="form-documento" class="editable" placeholder="000.000.000-00"></div>
+            <div><strong>WhatsApp / Telefone:</strong><br><input type="text" id="form-celular" class="editable" placeholder="(00) 99999-0000"></div>
+        </div>
+        
+        <div id="bloco-endereco-original" style="margin-top: 10px;">
+            <strong>Endereço da Execução:</strong><br><input type="text" id="form-endereco" class="editable" placeholder="Rua, Número, Bairro, Cidade" oninput="espelharDadosSegundaFolha()">
+        </div>
+
+        <div class="titulo-secao">3. Identificação do Equipamento / Objeto</div>
+        <div class="grid-2">
+            <div><strong>Equipamento / Marca / Modelo:</strong><br><input type="text" id="form-equip-modelo" class="editable" placeholder="Ex: Ar Condicionado Split Philco 12000 BTUs"></div>
+            <div><strong>Número de Série / Identificador único:</strong><br><input type="text" id="form-equip-serie" class="editable" placeholder="Ex: N/S: 458712953-A"></div>
+        </div>
+
+        <div class="titulo-secao">4. Descrição Detalhada do Trabalho Solicitado</div>
+        <textarea id="form-escopo" class="editable" style="width: 100%; height: 60px; resize: none;" placeholder="Descreva aqui o problema relatado ou o escopo livre..."></textarea>
+
+        <div class="titulo-secao">5. Detalhamento Técnico e Valores</div>
+        <button class="btn btn-primary btn-sm btn-acao-tabela" id="btn-adicionar-item-tabela" onclick="adicionarLinhaItem('', 1, 0)" style="margin-bottom: 10px;">➕ Adicionar Item (Serviço ou Material)</button>
+        
+        <table class="tabela-itens" id="tabela-financeira">
+            <thead>
+                <tr>
+                    <th>Descrição do Serviço Prestado ou Material Aplicado</th>
+                    <th style="width: 80px;" class="text-right">Qtd</th>
+                    <th style="width: 130px;" class="text-right">Val. Unitário (R$)</th>
+                    <th style="width: 130px;" class="text-right">Subtotal (R$)</th>
+                    <th style="width: 50px;" class="col-acao btn-acao-tabela">Ação</th>
+                </tr>
+            </thead>
+            <tbody id="corpo-tabela-itens"></tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3" class="text-right" style="font-weight: bold;">Forma de Pagamento Combinada:</td>
+                    <td colspan="2">
+                        <select id="form-forma-pagamento" class="editable" style="font-weight: bold; width: 100%;" onchange="espelharDadosSegundaFolha(); atualizarStatusFormaPagamento();">
+                            <option value="Pix">❖ Pix</option>
+                            <option value="Dinheiro">💵 Dinheiro</option>
+                            <option value="Cartão de Crédito">💳 Cartão de Crédito</option>
+                            <option value="Cartão de Débito">💳 Cartão de Débito</option>
+                            <option value="Boleto Bancário">📄 Boleto Bancário</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr class="linha-total">
+                    <td colspan="3" class="text-right">VALOR TOTAL DA O.S.:</td>
+                    <td class="text-right" id="txt-valor-total" style="color: #0056b3;">R$ 0,00</td>
+                    <td class="col-acao btn-acao-tabela"></td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <div class="bloco-comprovante-pagamento" id="bloco-comprovante">
+            <h3>📎 Comprovante de Pagamento</h3>
+            <div class="info-bloqueio" id="info-bloqueio-pix-boleto">
+                ⚠️ Para Pix ou Boleto, é necessário anexar o comprovante de pagamento para que o status seja alterado automaticamente para "Pago".
+            </div>
+            <div class="area-upload-comprovante" id="area-upload-comprovante" onclick="document.getElementById('input-comprovante').click();">
+                <div class="upload-info">
+                    <strong>📤 Clique ou arraste um arquivo aqui</strong>
+                    <span>Formatos aceitos: PDF, JPG, PNG<br>Tamanho máximo: 5MB</span>
+                </div>
+                <input type="file" id="input-comprovante" accept=".pdf,.jpg,.jpeg,.png" onchange="anexarComprovante(event)">
+            </div>
+            <div class="comprovante-anexado" id="comprovante-anexado">
+                <div class="comprovante-info">
+                    <span class="comprovante-nome" id="comprovante-nome">Comprovante anexado</span>
+                    <span class="comprovante-tamanho" id="comprovante-tamanho"></span>
+                </div>
+                <button class="btn btn-primary btn-comprovante" onclick="visualizarComprovante()">👁️ Visualizar</button>
+                <button class="btn btn-danger btn-comprovante" onclick="removerComprovante()">🗑️ Remover</button>
+            </div>
+        </div>
+
+        <div class="rodape-impressao-f2">
+            <div style="display: flex; justify-content: space-between;">
+                <span>O.S. Nº <span class="espelho-os-num">1</span> - Conteúdo vinculado à folha técnica anterior.</span>
+                <span>Página 2 de 2</span>
+            </div>
+        </div>
+
+        <div class="bloco-fechamento-os">
+            <div class="cabecalho-segunda-via">
+                <table class="tabela-infos-f2">
+                    <tr>
+                        <td style="font-weight: bold; text-transform: uppercase;">DOCUMENTO VINCULADO: ANEXO DE ENCERRAMENTO</td>
+                        <td style="text-align: right; font-weight: bold; color: #0056b3;">ORDEM DE SERVIÇO Nº <span class="espelho-os-num">1</span></td>
+                    </tr>
+                    <tr>
+                        <td style="color: #555;">Cliente: <span id="espelho-cliente" style="font-weight: bold; color: #111;">...</span></td>
+                        <td style="text-align: right; color: #555;">Página 2 de 2</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="color: #555; font-size: 11px !important; padding-top: 5px !important; border-top: 1px dotted #ddd !important;">
+                            Valor de Validação: <span id="espelho-valor" style="font-weight: bold; color:#0056b3;">R$ 0,00</span> via <span id="espelho-pagamento" style="font-weight: bold;">Pix</span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="titulo-secao">6. Termos de Encerramento e Garantia Legal</div>
+            <div class="termo-garantia-texto" id="bloco-texto-garantia"></div>
+
+            <p style="font-size: 11px; color:#444; margin-top: 20px; text-align: justify; font-weight: bold; line-height: 1.4;">
+                ⚠️ DECLARAÇÃO DE CONVENÇÃO: Ao assinar abaixo, o cliente confirma estar ciente e de pleno acordo com todas as especificações técnicas, quantitativos e valores descritos na folha anterior (Página 1) vinculada diretamente a este Termo de Encerramento sob o número identificador O.S. Nº <span class="espelho-os-num">1</span>.
+            </p>
+
+            <div class="assinaturas">
+                <div class="bloco-assinatura">Assinatura do Cliente / Responsável</div>
+                <div class="bloco-assinatura">Assinatura do Técnico / Prestador</div>
+            </div>
+        </div>
+
+        <div id="container-canhoto-avulso">
+            <div class="linha-serrilhada">
+                <span>✂️ COMPROVANTE DE ENTREGA DA O.S. (VIA AVULSA) ✂️</span>
+            </div>
+            <div class="canhoto-recortavel">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <h3 style="margin:0 0 5px 0; color:#0056b3;">RECIBO DE PROTOCOLO E ENTREGA - O.S. Nº <span id="canhoto-numero">0</span></h3>
+                        <small>Cliente / Solicitante: <span id="canhoto-cliente">...</span></small><br>
+                        <small>Equipamento / Modelo: <span id="canhoto-equip">...</span></small><br>
+                        <small style="font-weight: bold; color: #555;">Endereço da Execução: <span id="canhoto-endereco" style="color: #222;">...</span></small>
+                    </div>
+                    <div style="text-align:right;">
+                        <strong>Valor Total: <span id="canhoto-valor">R$ 0,00</span></strong><br>
+                        <small>Pagamento via: <span id="canhoto-pagamento">...</span></small>
+                    </div>
+                </div>
+                <p style="margin:20px 0 35px 0; font-size:12px; text-align:justify; color:#333; line-height:1.4;">
+                    Declaro para os devidos fins de direito que os serviços listados nesta Ordem de Serviço foram plenamente executados, testados na minha presença e entregues em perfeito estado de funcionamento e conservação nesta data.
+                </p>
+                <div style="display:flex; justify-content:space-between; margin-top:30px;">
+                    <div style="width:45%; border-top:1px solid #666; text-align:center; padding-top:5px; font-size:11px;">Data de Recebimento</div>
+                    <div style="width:45%; border-top:1px solid #666; text-align:center; padding-top:5px; font-size:11px;">Assinatura do Responsável</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="botoes-formulario" style="margin-top: 35px; display: flex; gap: 10px;">
+            <button class="btn btn-success" id="btn-salvar-os" onclick="salvarNovaOS()">💾 Salvar e Finalizar O.S.</button>
+            <button class="btn btn-info" id="btn-salvar-orcamento" style="background:#17a2b8; color:white;" onclick="salvarNovaOrcamento()">📝 Salvar como Orçamento</button>
+            <button class="btn btn-primary" onclick="imprimirDocumentoCompleto()">🖨️ Imprimir O.S. Completa</button>
+            <button class="btn btn-warning" id="btn-imprimir-canhoto-apenas" style="background:#198754; color:white; display:none;" onclick="imprimirApenasCanhoto()">🎫 Imprimir Apenas Canhoto</button>
+            <button class="btn btn-primary" id="btn-save-edits" style="display:none;" onclick="salvarAlteracoesOS()">💾 Salvar Alterações</button>
+            <button class="btn btn-danger" onclick="alternarAba('painel')">Voltar ao Painel</button>
+        </div>
+    </div>
+
+    </div>
+    <script src="prototipo.js"></script>
+    <script src="prototipo.auth.js"></script>
+
+</body>
+</html>
